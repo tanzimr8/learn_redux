@@ -1,45 +1,31 @@
 import { useState } from 'react';
 import Counter from './components/Counter';
 import Stats from './components/Stats';
-
-const initialCounters = [
-  {
-    id: 1,
-    value: 0,
-  }, {
-    id: 2, 
-    value: 0,
-  }
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { decreament, increament } from './features/counters/CountersSlice';
+import Posts from './components/Posts'
+// const initialCounters = [
+//   {
+//     id: 1,
+//     value: 0,
+//   }, {
+//     id: 2, 
+//     value: 0,
+//   }
+// ];
 
 function App() {
-  const [counters, setCounters] = useState(initialCounters);
+  const counters = useSelector(state => state.counters);
+  const dispatch = useDispatch();
+  console.log("Counters: ", counters);
   const totalCount = counters.reduce((sum,current)=>{
     return sum+current.value;
   },0)
-  const add = (getId) => {
-    const updatedCounters = counters.map((counter) => {
-      if (counter.id === getId) {
-        return {
-          ...counter,
-          value: counter.value + 1,
-        }
-      }
-      return counter
-    })
-    setCounters(updatedCounters);
+  const add = (counterId) => {
+    dispatch(increament(counterId));
   }
-  const sub = (getId) => {
-    const updatedCounters = counters.map((counter) => {
-      if (counter.id === getId) {
-        return {
-          ...counter,
-          value: counter.value - 1,
-        }
-      }
-      return counter
-    })
-    setCounters(updatedCounters);
+  const sub = (counterId) => {
+    dispatch(decreament(counterId));
   }
   return (
     <div className="min-h-screen w-full flex flex-col justify-center items-center space-y-6 p-8 border-2 border-sky-500">
@@ -47,6 +33,7 @@ function App() {
         return <Counter key={counter.id} add={() => { add(counter.id) }} sub={() => { sub(counter.id) }} count={counter.value}/>
       })}
       <Stats totalCount={totalCount} />
+      <Posts/>
     </div>
   );
 }
